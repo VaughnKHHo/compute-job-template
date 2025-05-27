@@ -1,0 +1,22 @@
+{
+    "u001": {
+        "source": "email",
+        "status": "active"
+    },
+    "u002": {
+        "source": "email",
+        "status": "active"
+    },
+    "u003": {
+        "source": "email",
+        "status": "active"
+    },
+    "u004": {
+        "source": "email",
+        "status": "active"
+    },
+    "u005": {
+        "source": "email",
+        "status": "active"
+    }
+}
