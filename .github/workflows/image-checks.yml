@@ -14,14 +14,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      
+
       - name: Set up Docker
         uses: docker/setup-buildx-action@v2
-      
+
+      - name: Make scripts executable
+        run: |
+          chmod +x ./scripts/image-build.sh
+          chmod +x ./scripts/image-run.sh
+          chmod +x ./scripts/image-export.sh
+        shell: bash
+
       - name: Run image-build script
         run: ./scripts/image-build.sh
         shell: bash
-      
+
       - name: Run image-run script
         run: ./scripts/image-run.sh
         shell: bash
@@ -32,11 +39,11 @@ jobs:
           name: generated-stats
           path: "output/stats.json"
           retention-days: 7
-      
+
       - name: Run image-export script
         run: ./scripts/image-export.sh
         shell: bash
-      
+
       - name: Upload exported image
         uses: actions/upload-artifact@v4
         with:
