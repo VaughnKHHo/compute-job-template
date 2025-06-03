@@ -43,6 +43,53 @@ def get_user_data(db_path: Path) -> Dict[str, Dict[str, Any]]:
         print(f"Error querying database: {e}")
         raise
 
+
+def get_chat_messages(db_path: Path) -> Dict[str, Dict[str, Any]]:
+    """Query the SQLite database and extract all chat messages with proper MessageID keys.
+
+    Args:
+        db_path: Path to the SQLite database file
+
+    Returns:
+        Dictionary with MessageID as keys and message data as values
+
+    Raises:
+        sqlite3.Error: If there's a database error
+        Exception: For other unexpected errors
+    """
+    try:
+        with sqlite3.connect(db_path) as conn:
+            conn.row_factory = sqlite3.Row  # Allows fetching rows as dict-like
+            cursor = conn.cursor()
+
+            # Query all messages with their related chat and submission info
+            cursor.execute('''
+                SELECT
+                    cm.*,
+                    sc.SubmissionID,
+                    s.UserID
+                FROM chat_messages cm
+                JOIN submission_chats sc ON cm.SubmissionChatID = sc.SubmissionChatID
+                JOIN submissions s ON sc.SubmissionID = s.SubmissionID
+            ''')
+
+            messages = {}
+            for row in cursor.fetchall():
+                row_dict = dict(row)
+                # Use the actual MessageID from schema as the key
+                message_id = row_dict['MessageID']
+                messages[message_id] = row_dict
+
+            return messages
+
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+        raise
+    except Exception as e:
+        print(f"Error querying database: {e}")
+        raise
+
+
 def save_stats_to_json(data: Dict[str, Any], output_path: Path) -> None:
     """Save data to a JSON file.
 
@@ -106,21 +153,33 @@ def execute_query(params: ContainerParams) -> bool:
     print(f"Query executed successfully, processing results from {params.db_path}")
     return True
 
+# def process_results(params: ContainerParams) -> None:
+#     """Process query results and generate stats file.
+
+#     Args:
+#         params: Container parameters
+#     """
+#     user_data = get_user_data(params.db_path)
+
+#     if user_data:
+#         print(f"Found {len(user_data)} users in the database")
+#         save_stats_to_json(user_data, params.stats_path)
+#     else:
+#         print("No user stats found in the database")
+#         # Create an empty stats file to indicate processing completed
+#         save_stats_to_json({}, params.stats_path)
+
 def process_results(params: ContainerParams) -> None:
-    """Process query results and generate stats file.
+    """Process query results and generate stats file."""
+    messages = get_chat_messages(params.db_path)
 
-    Args:
-        params: Container parameters
-    """
-    user_data = get_user_data(params.db_path)
-
-    if user_data:
-        print(f"Found {len(user_data)} users in the database")
-        save_stats_to_json(user_data, params.stats_path)
+    if messages:
+        print(f"Found {len(messages)} chat messages in the database")
+        save_stats_to_json(messages, params.stats_path)
     else:
-        print("No user stats found in the database")
-        # Create an empty stats file to indicate processing completed
+        print("No chat messages found in the database")
         save_stats_to_json({}, params.stats_path)
+
 
 def main() -> None:
     """Main entry point for the worker. TEST"""
