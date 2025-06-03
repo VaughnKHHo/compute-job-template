@@ -275,27 +275,27 @@ def execute_query(params: ContainerParams) -> bool:
 #         print("No chat messages found in the database")
 #         save_stats_to_json({}, params.stats_path)
 
-def process_results(params: ContainerParams) -> None:
-    """Process submission chats and generate stats file."""
-    chats = get_submission_chats(params.db_path)
-
-    if chats:
-        print(f"Found {len(chats)} submission chats in the database")
-        save_stats_to_json(chats, params.stats_path)
-    else:
-        print("No submission chats found in the database")
-        save_stats_to_json({}, params.stats_path)
-
 # def process_results(params: ContainerParams) -> None:
-#     """Process submissions and generate stats file."""
-#     submissions = get_submissions(params.db_path)
+#     """Process submission chats and generate stats file."""
+#     chats = get_submission_chats(params.db_path)
 
-#     if submissions:
-#         print(f"Found {len(submissions)} submissions in the database")
-#         save_stats_to_json(submissions, params.stats_path)
+#     if chats:
+#         print(f"Found {len(chats)} submission chats in the database")
+#         save_stats_to_json(chats, params.stats_path)
 #     else:
-#         print("No submissions found in the database")
+#         print("No submission chats found in the database")
 #         save_stats_to_json({}, params.stats_path)
+
+def process_results(params: ContainerParams) -> None:
+    """Process submissions and generate stats file."""
+    submissions = get_submissions(params.db_path)
+
+    if submissions:
+        print(f"Found {len(submissions)} submissions in the database")
+        save_stats_to_json(submissions, params.stats_path)
+    else:
+        print("No submissions found in the database")
+        save_stats_to_json({}, params.stats_path)
 
 # def process_results(params: ContainerParams) -> None:
 #     """Process users and generate stats file."""
