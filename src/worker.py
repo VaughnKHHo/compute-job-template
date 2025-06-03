@@ -65,11 +65,11 @@ def get_chat_messages(db_path: Path) -> Dict[str, Dict[str, Any]]:
             # Query all messages with their related chat and submission info
             cursor.execute('''
                 SELECT
-                    cm.*,
+                    r.*,
                     sc.SubmissionID,
                     s.UserID
-                FROM chat_messages cm
-                JOIN submission_chats sc ON cm.SubmissionChatID = sc.SubmissionChatID
+                FROM results r
+                JOIN submission_chats sc ON r.SubmissionChatID = sc.SubmissionChatID
                 JOIN submissions s ON sc.SubmissionID = s.SubmissionID
             ''')
 
