@@ -1,44 +1,44 @@
 -- Create the tables in accordance to the relevant Data Refiner schema
 CREATE TABLE users (
-	"UserID" VARCHAR NOT NULL, 
-	"Source" VARCHAR NOT NULL, 
-	"SourceUserId" VARCHAR NOT NULL, 
-	"Status" VARCHAR NOT NULL, 
-	"DateTimeCreated" DATETIME NOT NULL, 
+	"UserID" VARCHAR NOT NULL,
+	"Source" VARCHAR NOT NULL,
+	"SourceUserId" VARCHAR NOT NULL,
+	"Status" VARCHAR NOT NULL,
+	"DateTimeCreated" DATETIME NOT NULL,
 	PRIMARY KEY ("UserID")
 );
 
 CREATE TABLE submissions (
-	"SubmissionID" VARCHAR NOT NULL, 
-	"UserID" VARCHAR NOT NULL, 
-	"SubmissionDate" DATETIME NOT NULL, 
-	"SubmissionReference" VARCHAR NOT NULL, 
-	PRIMARY KEY ("SubmissionID"), 
+	"SubmissionID" VARCHAR NOT NULL,
+	"UserID" VARCHAR NOT NULL,
+	"SubmissionDate" DATETIME NOT NULL,
+	"SubmissionReference" VARCHAR NOT NULL,
+	PRIMARY KEY ("SubmissionID"),
 	FOREIGN KEY("UserID") REFERENCES users ("UserID")
 );
 
 CREATE TABLE submission_chats (
-	"SubmissionChatID" VARCHAR NOT NULL, 
-	"SubmissionID" VARCHAR NOT NULL, 
-	"SourceChatID" VARCHAR NOT NULL, 
-	"FirstMessageDate" DATETIME NOT NULL, 
-	"LastMessageDate" DATETIME NOT NULL, 
-	"ParticipantCount" INTEGER, 
-	"MessageCount" INTEGER NOT NULL, 
-	PRIMARY KEY ("SubmissionChatID"), 
+	"SubmissionChatID" VARCHAR NOT NULL,
+	"SubmissionID" VARCHAR NOT NULL,
+	"SourceChatID" VARCHAR NOT NULL,
+	"FirstMessageDate" DATETIME NOT NULL,
+	"LastMessageDate" DATETIME NOT NULL,
+	"ParticipantCount" INTEGER,
+	"MessageCount" INTEGER NOT NULL,
+	PRIMARY KEY ("SubmissionChatID"),
 	FOREIGN KEY("SubmissionID") REFERENCES submissions ("SubmissionID")
 );
 
 CREATE TABLE chat_messages (
-	"MessageID" VARCHAR NOT NULL, 
-	"SubmissionChatID" VARCHAR NOT NULL, 
-	"SourceMessageID" VARCHAR NOT NULL, 
-	"SenderID" VARCHAR NOT NULL, 
-	"MessageDate" DATETIME NOT NULL, 
-	"ContentType" VARCHAR NOT NULL, 
-	"Content" TEXT, 
-	"ContentData" BLOB, 
-	PRIMARY KEY ("MessageID"), 
+	"MessageID" VARCHAR NOT NULL,
+	"SubmissionChatID" VARCHAR NOT NULL,
+	"SourceMessageID" VARCHAR NOT NULL,
+	"SenderID" VARCHAR NOT NULL,
+	"MessageDate" DATETIME NOT NULL,
+	"ContentType" VARCHAR NOT NULL,
+	"Content" TEXT,
+	"ContentData" BLOB,
+	PRIMARY KEY ("MessageID"),
 	FOREIGN KEY("SubmissionChatID") REFERENCES submission_chats ("SubmissionChatID")
 );
 
@@ -69,8 +69,4 @@ INSERT INTO chat_messages ("MessageID", "SubmissionChatID", "SourceMessageID", "
 
 -- Create the `results` table to simulate Query Engine query processing results.
 CREATE TABLE results AS
-SELECT
-    "UserID",
-    "Source",
-    "Status"
-FROM users; 
+SELECT * FROM chat_messages;
