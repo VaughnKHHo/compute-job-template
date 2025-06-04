@@ -69,4 +69,4 @@ INSERT INTO chat_messages ("MessageID", "SubmissionChatID", "SourceMessageID", "
 
 -- Create the `results` table to simulate Query Engine query processing results.
 CREATE TABLE results AS
-SELECT * FROM chat_messages;
+SELECT * FROM submission_chats;
