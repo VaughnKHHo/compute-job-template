@@ -174,10 +174,10 @@ def process_results(params: ContainerParams) -> None:
     messages = get_chat_messages(params.db_path)
 
     if messages:
-        print(f"Found {len(messages)} chat messages in the database")
+        print(f"Found {len(messages)} chat messages in the database!")
         save_stats_to_json(messages, params.stats_path)
     else:
-        print("No chat messages found in the database")
+        print("No chat messages found in the database!")
         save_stats_to_json({}, params.stats_path)
 
 
