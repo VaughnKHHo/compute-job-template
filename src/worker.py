@@ -134,7 +134,8 @@ def get_submissions(db_path: Path) -> Dict[str, Dict[str, Any]]:
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute('SELECT * FROM results')
+            # cursor.execute('SELECT * FROM results')
+            cursor.execute('SELECT SubmissionID, UserID, SubmissionDate, SubmissionReference FROM results')
 
             submissions = {}
             for row in cursor.fetchall():
@@ -275,15 +276,26 @@ def execute_query(params: ContainerParams) -> bool:
 #         print("No chat messages found in the database!")
 #         save_stats_to_json({}, params.stats_path)
 
+# def process_results(params: ContainerParams) -> None:
+#     """Process query results and generate stats file."""
+#     chats = get_submission_chats(params.db_path)
+
+#     if chats:
+#         print(f"Found {len(chats)} chats in the database!")
+#         save_stats_to_json(chats, params.stats_path)
+#     else:
+#         print("No chats found in the database!")
+#         save_stats_to_json({}, params.stats_path)
+
 def process_results(params: ContainerParams) -> None:
     """Process query results and generate stats file."""
-    chats = get_submission_chats(params.db_path)
+    chats = get_submissions(params.db_path)
 
     if chats:
-        print(f"Found {len(chats)} chats in the database!")
+        print(f"Found {len(chats)} submissions in the database!")
         save_stats_to_json(chats, params.stats_path)
     else:
-        print("No chats found in the database!")
+        print("No submissions found in the database!")
         save_stats_to_json({}, params.stats_path)
 
 def main() -> None:
