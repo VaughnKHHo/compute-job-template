@@ -264,17 +264,27 @@ def execute_query(params: ContainerParams) -> bool:
 #         # Create an empty stats file to indicate processing completed
 #         save_stats_to_json({}, params.stats_path)
 
+# def process_results(params: ContainerParams) -> None:
+#     """Process query results and generate stats file."""
+#     messages = get_chat_messages(params.db_path)
+
+#     if messages:
+#         print(f"Found {len(messages)} chat messages in the database!")
+#         save_stats_to_json(messages, params.stats_path)
+#     else:
+#         print("No chat messages found in the database!")
+#         save_stats_to_json({}, params.stats_path)
+
 def process_results(params: ContainerParams) -> None:
     """Process query results and generate stats file."""
-    messages = get_chat_messages(params.db_path)
+    chats = get_submission_chats(params.db_path)
 
-    if messages:
-        print(f"Found {len(messages)} chat messages in the database!")
-        save_stats_to_json(messages, params.stats_path)
+    if chats:
+        print(f"Found {len(chats)} chats in the database!")
+        save_stats_to_json(chats, params.stats_path)
     else:
-        print("No chat messages found in the database!")
+        print("No chats found in the database!")
         save_stats_to_json({}, params.stats_path)
-
 
 def main() -> None:
     """Main entry point for the worker. TEST"""
