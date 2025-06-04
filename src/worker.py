@@ -287,15 +287,26 @@ def execute_query(params: ContainerParams) -> bool:
 #         print("No chats found in the database!")
 #         save_stats_to_json({}, params.stats_path)
 
+# def process_results(params: ContainerParams) -> None:
+#     """Process query results and generate stats file."""
+#     chats = get_submissions(params.db_path)
+
+#     if chats:
+#         print(f"Found {len(chats)} submissions in the database!")
+#         save_stats_to_json(chats, params.stats_path)
+#     else:
+#         print("No submissions found in the database!")
+#         save_stats_to_json({}, params.stats_path)
+
 def process_results(params: ContainerParams) -> None:
     """Process query results and generate stats file."""
-    chats = get_submissions(params.db_path)
+    chats = get_users(params.db_path)
 
     if chats:
-        print(f"Found {len(chats)} submissions in the database!")
+        print(f"Found {len(chats)} users in the database!")
         save_stats_to_json(chats, params.stats_path)
     else:
-        print("No submissions found in the database!")
+        print("No users found in the database!")
         save_stats_to_json({}, params.stats_path)
 
 def main() -> None:
