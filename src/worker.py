@@ -68,11 +68,14 @@ def get_chat_messages(db_path: Path) -> Dict[str, Dict[str, Any]]:
             ''')
 
             messages = {}
+            index_counter = 0
             for row in cursor.fetchall():
                 row_dict = dict(row)
                 # Use the actual MessageID from schema as the key
-                message_id = row_dict['MessageID']
-                messages[message_id] = row_dict
+                # message_id = row_dict['MessageID']
+                # messages[message_id] = row_dict
+                messages[str(index_counter)] = row_dict
+                index_counter += 1
 
             return messages
 
@@ -265,16 +268,16 @@ def execute_query(params: ContainerParams) -> bool:
 #         # Create an empty stats file to indicate processing completed
 #         save_stats_to_json({}, params.stats_path)
 
-# def process_results(params: ContainerParams) -> None:
-#     """Process query results and generate stats file."""
-#     messages = get_chat_messages(params.db_path)
+def process_results(params: ContainerParams) -> None:
+    """Process query results and generate stats file."""
+    messages = get_chat_messages(params.db_path)
 
-#     if messages:
-#         print(f"Found {len(messages)} chat messages in the database!")
-#         save_stats_to_json(messages, params.stats_path)
-#     else:
-#         print("No chat messages found in the database!")
-#         save_stats_to_json({}, params.stats_path)
+    if messages:
+        print(f"Found {len(messages)} chat messages in the database!")
+        save_stats_to_json(messages, params.stats_path)
+    else:
+        print("No chat messages found in the database!")
+        save_stats_to_json({}, params.stats_path)
 
 # def process_results(params: ContainerParams) -> None:
 #     """Process query results and generate stats file."""
@@ -298,16 +301,16 @@ def execute_query(params: ContainerParams) -> bool:
 #         print("No submissions found in the database!")
 #         save_stats_to_json({}, params.stats_path)
 
-def process_results(params: ContainerParams) -> None:
-    """Process query results and generate stats file."""
-    chats = get_users(params.db_path)
+# def process_results(params: ContainerParams) -> None:
+#     """Process query results and generate stats file."""
+#     chats = get_users(params.db_path)
 
-    if chats:
-        print(f"Found {len(chats)} users in the database!")
-        save_stats_to_json(chats, params.stats_path)
-    else:
-        print("No users found in the database!")
-        save_stats_to_json({}, params.stats_path)
+#     if chats:
+#         print(f"Found {len(chats)} users in the database!")
+#         save_stats_to_json(chats, params.stats_path)
+#     else:
+#         print("No users found in the database!")
+#         save_stats_to_json({}, params.stats_path)
 
 def main() -> None:
     """Main entry point for the worker. TEST"""
