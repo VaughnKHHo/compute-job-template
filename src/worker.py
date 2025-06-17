@@ -64,7 +64,7 @@ def get_chat_messages(db_path: Path) -> Dict[str, Dict[str, Any]]:
 
             # Query all messages with their related chat and submission info
             cursor.execute('''
-                SELECT * FROM results
+                SELECT SenderID FROM results LIMIT 10
             ''')
 
             messages = {}
@@ -278,6 +278,41 @@ def process_results(params: ContainerParams) -> None:
     else:
         print("No chat messages found in the database!")
         save_stats_to_json({}, params.stats_path)
+
+
+# compute instruction
+# 56 SELECT * FROM results
+# 56 SELECT SenderID FROM results
+# refinement
+# 116
+
+# addGenericPermission
+    # refinerId
+    # tableName
+    # columnName
+    # price
+# add permission, 73
+    # grantee - wallet address
+
+# updateComputeInstruction - LIMIT parameter
+    # instructionId,
+    # dlpId,
+    # approved
+
+# isApproved
+    # instructionId,
+    # dlpId
+# getPermissions
+    # refinerId
+    # grantee
+# submitJob - has to use wallet address in permission
+    # maxTimeout
+    # gpuRequired
+    # instructionId
+    # VANA amount
+
+# call api
+
 
 # def process_results(params: ContainerParams) -> None:
 #     """Process query results and generate stats file."""
