@@ -6,6 +6,39 @@ from typing import Dict, Any
 from query_engine_client import QueryEngineClient
 from container_params import ContainerParams, ContainerParamError
 
+def print_table_info(db_path: Path, table_name: str) -> None:
+    """
+    Connects to an SQLite database and prints the table information
+    (columns) for a given table.
+
+    Args:
+        db_path: Path to the SQLite database file.
+        table_name: The name of the table to inspect.
+    """
+    try:
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.cursor()
+
+            # Execute the PRAGMA command
+            # Note: PRAGMA statements are not standard SQL, but specific to SQLite
+            cursor.execute(f"PRAGMA table_info('{table_name}');")
+
+            # Get column names from the cursor description
+            column_names = [description[0] for description in cursor.description]
+            print(f"\n--- Columns for table: {table_name} ---")
+            print(" | ".join(column_names))
+            print("-" * (len(" | ".join(column_names)) + 5)) # Simple separator
+
+            # Fetch all rows and print them
+            for row in cursor.fetchall():
+                # Convert each item in the row to string for consistent printing
+                print(" | ".join(map(str, row)))
+
+    except sqlite3.Error as e:
+        print(f"SQLite error when getting table info for '{table_name}': {e}")
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+
 def get_user_data(db_path: Path) -> Dict[str, Dict[str, Any]]:
     """Query the SQLite database and extract user data.
 
@@ -279,9 +312,14 @@ def process_results(params: ContainerParams) -> None:
         print("No chat messages found in the database!")
         save_stats_to_json({}, params.stats_path)
 
+    print_table_info(params.db_path, "chat_messages")
+    print_table_info(params.db_path, "submission_chats")
+    print_table_info(params.db_path, "submissions")
+    print_table_info(params.db_path, "users")
+
 
 # compute instruction
-# 56 SELECT * FROM results
+# 56 SELECT * FROM results, https://github.com/VaughnKHHo/compute-job-template/releases/download/v16/my-compute-job-16.tar.gz
 # 56 SELECT SenderID FROM results
 # refinement
 # 116
@@ -353,6 +391,7 @@ def main() -> None:
         # Load parameters from environment variables
         try:
             params = ContainerParams.from_env()
+            print(f"params: ${params}")
         except ContainerParamError as e:
             print(f"Error in container parameters: {e}")
             sys.exit(1)
