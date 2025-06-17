@@ -312,11 +312,6 @@ def process_results(params: ContainerParams) -> None:
         print("No chat messages found in the database!")
         save_stats_to_json({}, params.stats_path)
 
-    print_table_info(params.db_path, "chat_messages")
-    print_table_info(params.db_path, "submission_chats")
-    print_table_info(params.db_path, "submissions")
-    print_table_info(params.db_path, "users")
-
 
 # compute instruction
 # 56 SELECT * FROM results, https://github.com/VaughnKHHo/compute-job-template/releases/download/v16/my-compute-job-16.tar.gz
@@ -405,6 +400,10 @@ def main() -> None:
             if not execute_query(params):
                 sys.exit(2)
 
+        print_table_info(params.db_path, "chat_messages")
+        print_table_info(params.db_path, "submission_chats")
+        print_table_info(params.db_path, "submissions")
+        print_table_info(params.db_path, "users")
         # Process results (whether from dev mode or query execution)
         process_results(params)
 
