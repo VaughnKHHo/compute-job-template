@@ -222,6 +222,36 @@ def get_users(db_path: Path) -> Dict[str, Dict[str, Any]]:
         print(f"Error querying database: {e}")
         raise
 
+def get_data(db_path: Path) -> Dict[str, Dict[str, Any]]:
+    """Fetch all rows from the 'results' table in the SQLite database.
+
+    Each row is returned as a dictionary with column names as keys.
+
+    Args:
+        db_path: Path to the SQLite database file.
+
+    Returns:
+        A list of dictionaries, each representing a row from the 'results' table.
+
+    Raises:
+        sqlite3.Error: If a database error occurs.
+        Exception: For other unexpected errors.
+    """
+    try:
+        with sqlite3.connect(db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM results')
+            return [dict(row) for row in cursor.fetchall()]
+
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
+        raise
+    except Exception as e:
+        print(f"Error querying database: {e}")
+        raise
+
+
 def save_stats_to_json(data: Dict[str, Any], output_path: Path) -> None:
     """Save data to a JSON file.
 
@@ -301,51 +331,16 @@ def execute_query(params: ContainerParams) -> bool:
 #         # Create an empty stats file to indicate processing completed
 #         save_stats_to_json({}, params.stats_path)
 
-def process_results(params: ContainerParams) -> None:
-    """Process query results and generate stats file."""
-    messages = get_chat_messages(params.db_path)
+# def process_results(params: ContainerParams) -> None:
+#     """Process query results and generate stats file."""
+#     messages = get_chat_messages(params.db_path)
 
-    if messages:
-        print(f"Found {len(messages)} chat messages in the database!")
-        save_stats_to_json(messages, params.stats_path)
-    else:
-        print("No chat messages found in the database!")
-        save_stats_to_json({}, params.stats_path)
-
-
-# compute instruction
-# 56 SELECT * FROM results, https://github.com/VaughnKHHo/compute-job-template/releases/download/v16/my-compute-job-16.tar.gz
-# 56 SELECT SenderID FROM results
-# refinement
-# 116
-
-# addGenericPermission
-    # refinerId
-    # tableName
-    # columnName
-    # price
-# add permission, 73
-    # grantee - wallet address
-
-# updateComputeInstruction - LIMIT parameter
-    # instructionId,
-    # dlpId,
-    # approved
-
-# isApproved
-    # instructionId,
-    # dlpId
-# getPermissions
-    # refinerId
-    # grantee
-# submitJob - has to use wallet address in permission
-    # maxTimeout
-    # gpuRequired
-    # instructionId
-    # VANA amount
-
-# call api
-
+#     if messages:
+#         print(f"Found {len(messages)} chat messages in the database!")
+#         save_stats_to_json(messages, params.stats_path)
+#     else:
+#         print("No chat messages found in the database!")
+#         save_stats_to_json({}, params.stats_path)
 
 # def process_results(params: ContainerParams) -> None:
 #     """Process query results and generate stats file."""
@@ -379,6 +374,17 @@ def process_results(params: ContainerParams) -> None:
 #     else:
 #         print("No users found in the database!")
 #         save_stats_to_json({}, params.stats_path)
+
+def process_results(params: ContainerParams) -> None:
+    """Process query results and generate stats file."""
+    data = get_data(params.db_path)
+
+    if data:
+        print(f"Found {len(data)} records in the database!")
+        save_stats_to_json(data, params.stats_path)
+    else:
+        print("No records found in the database!")
+        save_stats_to_json({}, params.stats_path)
 
 def main() -> None:
     """Main entry point for the worker. TEST"""
