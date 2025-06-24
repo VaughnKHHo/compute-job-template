@@ -136,15 +136,16 @@ def get_submission_chats(db_path: Path) -> Dict[str, Dict[str, Any]]:
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute('SELECT FirstMessageDate, LastMessageDate, ParticipantCount FROM results')
+            cursor.execute('SELECT SubmissionChatID, FirstMessageDate, LastMessageDate, ParticipantCount FROM results')
 
-            chats = {}
-            for row in cursor.fetchall():
-                row_dict = dict(row)
-                chat_id = row_dict['SubmissionChatID']
-                chats[chat_id] = row_dict
+            # chats = {}
+            # for row in cursor.fetchall():
+            #     row_dict = dict(row)
+            #     chat_id = row_dict['SubmissionChatID']
+            #     chats[chat_id] = row_dict
+            # return chats
 
-            return chats
+            return [dict(row) for row in cursor.fetchall()]
 
     except sqlite3.Error as e:
         print(f"SQLite error: {e}")
