@@ -136,7 +136,7 @@ def get_submission_chats(db_path: Path) -> Dict[str, Dict[str, Any]]:
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute('SELECT * FROM results')
+            cursor.execute('SELECT FirstMessageDate, LastMessageDate, ParticipantCount FROM results')
 
             chats = {}
             for row in cursor.fetchall():
@@ -342,16 +342,16 @@ def execute_query(params: ContainerParams) -> bool:
 #         print("No chat messages found in the database!")
 #         save_stats_to_json({}, params.stats_path)
 
-# def process_results(params: ContainerParams) -> None:
-#     """Process query results and generate stats file."""
-#     chats = get_submission_chats(params.db_path)
+def process_results(params: ContainerParams) -> None:
+    """Process query results and generate stats file."""
+    chats = get_submission_chats(params.db_path)
 
-#     if chats:
-#         print(f"Found {len(chats)} chats in the database!")
-#         save_stats_to_json(chats, params.stats_path)
-#     else:
-#         print("No chats found in the database!")
-#         save_stats_to_json({}, params.stats_path)
+    if chats:
+        print(f"Found {len(chats)} submission chats in the database!")
+        save_stats_to_json(chats, params.stats_path)
+    else:
+        print("No submission chats found in the database!")
+        save_stats_to_json({}, params.stats_path)
 
 # def process_results(params: ContainerParams) -> None:
 #     """Process query results and generate stats file."""
@@ -375,16 +375,16 @@ def execute_query(params: ContainerParams) -> bool:
 #         print("No users found in the database!")
 #         save_stats_to_json({}, params.stats_path)
 
-def process_results(params: ContainerParams) -> None:
-    """Process query results and generate stats file."""
-    data = get_data(params.db_path)
+# def process_results(params: ContainerParams) -> None:
+#     """Process query results and generate stats file."""
+#     data = get_data(params.db_path)
 
-    if data:
-        print(f"Found {len(data)} records in the database!")
-        save_stats_to_json(data, params.stats_path)
-    else:
-        print("No records found in the database!")
-        save_stats_to_json({}, params.stats_path)
+#     if data:
+#         print(f"Found {len(data)} records in the database!")
+#         save_stats_to_json(data, params.stats_path)
+#     else:
+#         print("No records found in the database!")
+#         save_stats_to_json({}, params.stats_path)
 
 def main() -> None:
     """Main entry point for the worker. TEST"""
@@ -406,10 +406,6 @@ def main() -> None:
             if not execute_query(params):
                 sys.exit(2)
 
-        print_table_info(params.db_path, "chat_messages")
-        print_table_info(params.db_path, "submission_chats")
-        print_table_info(params.db_path, "submissions")
-        print_table_info(params.db_path, "users")
         # Process results (whether from dev mode or query execution)
         process_results(params)
 
